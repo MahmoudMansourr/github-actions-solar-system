@@ -11,10 +11,6 @@ env:
   MONGO_USERNAME: superuser
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
 
-permissions:
- packages: write
- contents: read
-
 jobs:
     unit-testing:
         name: Unit Testing
@@ -69,7 +65,10 @@ jobs:
             path: coverage
             retention-days: 5
     docker:
-      name: docker
+      name: docker   
+      permissions:
+       packages: write
+       contents: read
       needs:
         - code-coverage
         - unit-testing
