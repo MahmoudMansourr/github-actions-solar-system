@@ -111,15 +111,28 @@ jobs:
       - run: |
           sleep 60
           kubectl -n kube-system get pod
+
           set +e
+
           REPO_OWNER_LC="${GITHUB_REPOSITORY_OWNER,,}"
-          kubectl run solar --image ghcr.io/${REPO_OWNER_LC}/solar-system:${{ github.sha }} \
-            --env MONGO_URI=${{ env.MONGO_URI}} \
-            --env MONGO_USERNAME=${{ env.MONGO_USERNAME}} \
-            --env MONGO_PASSWORD=${{ env.MONGO_PASSWORD}}
+
+          kubectl run solar \
+            --image="ghcr.io/${REPO_OWNER_LC}/solar-system:${GITHUB_SHA}" \
+            --env="MONGO_URI=${MONGO_URI}" \
+            --env="MONGO_USERNAME=${MONGO_USERNAME}" \
+            --env="MONGO_PASSWORD=${MONGO_PASSWORD}"
+
+          KUBECTL_EXIT_CODE=$?
           set -e
-          echo "kubectl returned $?"
+
+          echo "kubectl returned $KUBECTL_EXIT_CODE"
+
           kubectl -n default get pod
           sleep 10
+        env:
+          MONGO_URI: ${{ env.MONGO_URI }}
+          MONGO_USERNAME: ${{ env.MONGO_USERNAME }}
+          MONGO_PASSWORD: ${{ env.MONGO_PASSWORD }}
+
 
 
